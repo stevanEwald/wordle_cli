@@ -1,0 +1,10 @@
+[package]
+name = "wordle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+colored = "2.1.0"
+colorize = "0.1.0"
+rand = "0.8.5"
+thiserror = "2.0.3"
