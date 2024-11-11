@@ -2,7 +2,7 @@ mod guess;
 mod letter;
 
 use guess::Guess;
-use letter::LetterWithState;
+use letter::{LetterWithState, LetterState};
 
 use thiserror::Error;
 use std::fmt::Display;
@@ -27,7 +27,7 @@ impl Game {
             return Err(Error::NonLetterChar { character });
         }
         let letters = ('a'..='z')
-            .map(|letter| LetterWithState::new(letter).unwrap())
+            .map(|letter| LetterWithState::new(letter, LetterState::NotGuessed).unwrap())
             .collect();
         return Ok(Game {
             target_word: target_word.to_owned(),

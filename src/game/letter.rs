@@ -16,14 +16,7 @@ pub struct LetterWithState {
     state: LetterState,
 }
 impl LetterWithState {
-    pub fn new(letter: char) -> Result<Self, Error> {
-        let letter = letter.to_ascii_lowercase();
-        return match letter.is_ascii_alphabetic() {
-            true => Ok(Self { letter, state: LetterState::NotGuessed }),
-            false => Err(Error::NonLetterChar { character: letter }),
-        };
-    }
-    pub fn new_with_state(letter: char, state: LetterState) -> Result<Self, Error> {
+    pub fn new(letter: char, state: LetterState) -> Result<Self, Error> {
         let letter = letter.to_ascii_lowercase();
         return match letter.is_ascii_alphabetic() {
             true => Ok(Self { letter, state }),

@@ -24,7 +24,7 @@ impl Guess {
                     },
                     false => LetterState::NotInWord,
                 };
-                LetterWithState::new_with_state(c, letter_state)
+                LetterWithState::new(c, letter_state)
             })
             .collect::<Result<Vec<_>, Error>>()?
             .try_into()
