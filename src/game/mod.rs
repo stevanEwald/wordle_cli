@@ -2,13 +2,13 @@ mod guess;
 mod letter;
 
 use guess::Guess;
-use letter::{LetterWithState, LetterState};
+use letter::{LetterState, LetterWithState};
 
-use thiserror::Error;
 use std::fmt::Display;
+use thiserror::Error;
 
 #[derive(Clone, PartialEq, Eq, Hash)]
- pub struct Game {
+pub struct Game {
     target_word: String,
     guesses: Vec<Guess>,
     letters: Vec<LetterWithState>,
@@ -68,7 +68,7 @@ impl Game {
             .letters
             .iter_mut()
             .find(|l| l.letter() == letter)
-            .unwrap()
+            .unwrap();
     }
 }
 impl Display for Game {
@@ -102,7 +102,6 @@ impl Display for Game {
         return Ok(());
     }
 }
-
 
 #[derive(Error, Debug)]
 pub enum Error {

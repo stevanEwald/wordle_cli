@@ -1,6 +1,6 @@
-use std::fmt::Display;
-use super::letter::{LetterWithState, LetterState};
+use super::letter::{LetterState, LetterWithState};
 use super::Error;
+use std::fmt::Display;
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct Guess {
     letters: [LetterWithState; 5],
@@ -45,4 +45,3 @@ impl Display for Guess {
         return write!(f, "{}", guess);
     }
 }
-

@@ -1,5 +1,5 @@
+use colored::{ColoredString, Colorize};
 use std::fmt::Display;
-use colored::{Colorize, ColoredString};
 
 use super::Error;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

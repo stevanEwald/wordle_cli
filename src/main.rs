@@ -1,6 +1,6 @@
+use colored::Colorize;
 use rand::prelude::*;
 use std::{fs, io, path::Path};
-use colored::Colorize;
 
 mod game;
 use game::*;
