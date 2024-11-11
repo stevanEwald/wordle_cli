@@ -1,7 +1,9 @@
 use rand::prelude::*;
 use std::{fs, io, path::Path};
-use wordle::*;
 use colored::Colorize;
+
+mod game;
+use game::*;
 fn main() {
     let word_list_string = std::env::var("CARGO_MANIFEST_DIR")
         .expect("failed to read enviornment variable: CARGO_MAINIFEST_DIR")
@@ -19,7 +21,7 @@ fn main() {
 
     let stdin = io::stdin();
     let mut guess = String::new();
-    let mut guess_result: Result<(), wordle::Error> = Ok(());
+    let mut guess_result: Result<(), game::Error> = Ok(());
 
     loop {
         std::process::Command::new("clear").status().unwrap();
@@ -28,7 +30,7 @@ fn main() {
         if let Err(e) = &guess_result {
             let colored_error_message = e.to_string().red();
             println!("{colored_error_message}");
-            if let wordle::Error::OutOfTurns { .. } | wordle::Error::GameWon = e {
+            if let game::Error::OutOfTurns { .. } | game::Error::GameWon = e {
                 break;
             }
         }
