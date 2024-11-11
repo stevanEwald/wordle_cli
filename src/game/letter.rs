@@ -28,7 +28,7 @@ impl LetterWithState {
         let letter = self.letter.to_string();
         return match self.state {
             NotGuessed => letter.white(),
-            NotInWord => letter.black(),
+            NotInWord => letter.bright_black(),
             IncorrectPosition => letter.yellow(),
             CorrectPosition => letter.green(),
         }
