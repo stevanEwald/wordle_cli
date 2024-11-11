@@ -26,7 +26,7 @@ impl LetterWithState {
     pub fn colorize(&self) -> ColoredString {
         use LetterState::*;
         let letter = self.letter.to_string();
-        match self.state {
+        return match self.state {
             NotGuessed => letter.white(),
             NotInWord => letter.black(),
             IncorrectPosition => letter.yellow(),

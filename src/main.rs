@@ -28,7 +28,10 @@ fn main() {
         guess.clear();
         println!("{game}");
         if let Err(e) = &guess_result {
-            let colored_error_message = e.to_string().red();
+            let colored_error_message = match e {
+                Error::GameWon => e.to_string().green(),
+                _ => e.to_string().red(),
+            };
             println!("{colored_error_message}");
             if let game::Error::OutOfTurns { .. } | game::Error::GameWon = e {
                 break;

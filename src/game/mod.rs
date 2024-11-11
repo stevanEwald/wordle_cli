@@ -105,7 +105,7 @@ impl Display for Game {
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("Invalid Guess: {character}, guess must include only letters")]
+    #[error("Invalid character: {character}, guess must include only letters")]
     NonLetterChar { character: char },
     #[error("Inavlid Guess: {guess}, guess must be exactly 5 letters")]
     WrongGuessLength { guess: String },
