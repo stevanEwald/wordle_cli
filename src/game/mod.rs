@@ -42,15 +42,24 @@ impl Game {
                 target_word: self.target_word.clone(),
             });
         }
-        let guess = word.trim().to_ascii_lowercase();
-        let new_guess = Guess::new(&guess, &self.target_word)?;
+        let last_word = self.guesses
+            .iter()
+            .last()
+            .map(|last_guess| last_guess.to_string());
+        if let Some(last_word) = last_word {
+            if last_word == self.target_word {
+                return Err(Error::GameWon)
+            }
+        }
+        let word = word.trim().to_ascii_lowercase();
+        let guess = Guess::new(&word, &self.target_word)?;
 
-        for guess_letter in new_guess.letters().iter() {
+        for guess_letter in guess.letters().iter() {
             let game_letter = self.get_mut_letter(guess_letter.letter());
             game_letter.update_state(guess_letter.state());
         }
-        self.guesses.push(new_guess);
-        if guess == self.target_word {
+        self.guesses.push(guess);
+        if word == self.target_word {
             return Err(Error::GameWon);
         }
         if self.turn_number() >= self.turn_count {
@@ -70,12 +79,19 @@ impl Game {
             .find(|l| l.letter() == letter)
             .unwrap();
     }
+    fn get_letter(&self, letter: char) -> &LetterWithState {
+        return self
+            .letters
+            .iter()
+            .find(|l| l.letter() == letter)
+            .unwrap();
+    }
 }
 impl Display for Game {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for i in 0..self.turn_count {
             match self.guesses.get(i) {
-                Some(guess) => writeln!(f, "{guess}")?,
+                Some(guess) => writeln!(f, "{}", guess.to_colored_string())?,
                 None => writeln!(f)?,
             }
         }
@@ -87,13 +103,10 @@ impl Display for Game {
         ];
         for row in keyboard_positions.into_iter() {
             let letter_row = row
-                .iter()
+                .into_iter()
                 .map(|c| {
-                    self.letters
-                        .iter()
-                        .find(|letter| letter.letter() == *c)
-                        .unwrap()
-                        .to_string()
+                    self.get_letter(c)
+                        .to_colored_string()
                 })
                 .collect::<Vec<_>>()
                 .join(" ");

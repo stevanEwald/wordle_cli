@@ -1,4 +1,4 @@
-use colored::{ColoredString, Colorize};
+use colored::Colorize;
 use std::fmt::Display;
 
 use super::Error;
@@ -23,14 +23,14 @@ impl LetterWithState {
             false => Err(Error::NonLetterChar { character: letter }),
         };
     }
-    pub fn colorize(&self) -> ColoredString {
+    pub fn to_colored_string(&self) -> String {
         use LetterState::*;
         let letter = self.letter.to_string();
         return match self.state {
-            NotGuessed => letter.white(),
-            NotInWord => letter.bright_black(),
-            IncorrectPosition => letter.yellow(),
-            CorrectPosition => letter.green(),
+            NotGuessed => letter.white().to_string(),
+            NotInWord => letter.bright_black().to_string(),
+            IncorrectPosition => letter.yellow().to_string(),
+            CorrectPosition => letter.green().to_string(),
         }
     }
     pub fn state(&self) -> LetterState {
@@ -53,6 +53,6 @@ impl LetterWithState {
 }
 impl Display for LetterWithState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.colorize())
+        write!(f, "{}", self.letter)
     }
 }
