@@ -10,6 +10,7 @@ fn main() {
         + "/words.txt";
     let word_list_path = Path::new(&word_list_string);
     let word_list = fs::read_to_string(word_list_path).expect("failed to read word list file");
+
     let target_word = word_list
         .lines()
         .choose(&mut ThreadRng::default())
@@ -17,28 +18,31 @@ fn main() {
     assert_eq!(target_word.len(), 5);
 
     let turn_count = 6;
+
     let mut game = Game::new(target_word, turn_count).unwrap();
 
     let stdin = io::stdin();
     let mut guess = String::new();
-    let mut guess_result: Result<(), game::Error> = Ok(());
-
+    let mut error_message = None;
     loop {
         std::process::Command::new("clear").status().unwrap();
         guess.clear();
-        println!("{game}");
-        if let Err(e) = &guess_result {
-            let colored_error_message = match e {
-                Error::GameWon => e.to_string().green(),
-                _ => e.to_string().red(),
-            };
-            println!("{colored_error_message}");
-            if let game::Error::OutOfTurns { .. } | game::Error::GameWon = e {
-                break;
-            }
+        print!("{game}");
+        if let Some(error) = error_message.take() {
+            println!("{error}")
         }
         stdin.read_line(&mut guess).unwrap();
-
-        guess_result = game.guess(&guess);
+        match game.guess(&guess) {
+            Ok(GameState::InProgress) => (),
+            Ok(GameState::Won) => {
+                println!("Congratulations, You won");
+                break
+            }
+            Ok(GameState::OutOfTurns) => {
+                println!("Game over: the word was {}", game.target_word());
+                break
+            }
+            Err(e) => error_message = Some(e.to_string().red())
+        }
     }
 }

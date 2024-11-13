@@ -7,12 +7,19 @@ use letter::{LetterState, LetterWithState};
 use std::fmt::Display;
 use thiserror::Error;
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub enum GameState {
+    Won,
+    OutOfTurns,
+    InProgress,
+}
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Game {
     target_word: String,
     guesses: Vec<Guess>,
     letters: Vec<LetterWithState>,
     turn_count: usize,
+    state: GameState,
 }
 impl Game {
     pub fn new(target_word: &str, turn_count: usize) -> Result<Self, Error> {
@@ -34,22 +41,14 @@ impl Game {
             guesses: Vec::new(),
             letters,
             turn_count,
+            state: GameState::InProgress
         });
     }
-    pub fn guess(&mut self, word: &str) -> Result<(), Error> {
-        if self.turn_number() >= self.turn_count {
-            return Err(Error::OutOfTurns {
-                target_word: self.target_word.clone(),
-            });
-        }
-        let last_word = self.guesses
-            .iter()
-            .last()
-            .map(|last_guess| last_guess.to_string());
-        if let Some(last_word) = last_word {
-            if last_word == self.target_word {
-                return Err(Error::GameWon)
-            }
+    pub fn guess(&mut self, word: &str) -> Result<GameState, Error> {
+        match self.state {
+            GameState::InProgress => (),
+            GameState::OutOfTurns => return Err(Error::OutOfTurns { target_word: self.target_word.clone() }),
+            GameState::Won => return Err(Error::GameAlreadyWon)
         }
         let word = word.trim().to_ascii_lowercase();
         let guess = Guess::new(&word, &self.target_word)?;
@@ -58,19 +57,31 @@ impl Game {
             let game_letter = self.get_mut_letter(guess_letter.letter());
             game_letter.update_state(guess_letter.state());
         }
+
         self.guesses.push(guess);
-        if word == self.target_word {
-            return Err(Error::GameWon);
+        if self.won() {
+            self.state = GameState::Won;
         }
-        if self.turn_number() >= self.turn_count {
-            return Err(Error::OutOfTurns {
-                target_word: self.target_word.clone(),
-            });
+        if self.turn_number() > self.turn_count {
+            self.state = GameState::OutOfTurns;
         }
-        return Ok(());
+        return Ok(self.state);
+    }
+    pub fn won(&self) -> bool {
+        let last_guess = self.guesses
+            .iter()
+            .last()
+            .map(|last_guess| last_guess.to_string());
+        return match last_guess {
+            Some(last_guess) => last_guess.to_string() == self.target_word,
+            None => false,
+        }
     }
     pub fn turn_number(&self) -> usize {
-        return self.guesses.len();
+        return self.guesses.len() + 1
+    }
+    pub fn target_word(&self) -> String {
+        return self.target_word.clone()
     }
     fn get_mut_letter(&mut self, letter: char) -> &mut LetterWithState {
         return self
@@ -118,12 +129,12 @@ impl Display for Game {
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("Invalid character: {character}, guess must include only letters")]
+    #[error("Invalid character: \"{character}\", guess must include only letters")]
     NonLetterChar { character: char },
-    #[error("Inavlid Guess: {guess}, guess must be exactly 5 letters")]
+    #[error("Inavlid guess length: {guess}, guess must be exactly 5 letters")]
     WrongGuessLength { guess: String },
-    #[error("Game over: the word was {target_word}")]
+    #[error("Error: tried to guess after game was out of turns")]
     OutOfTurns { target_word: String },
-    #[error("Congratulations, You win")]
-    GameWon,
+    #[error("Error: tried to guess after game was already won")]
+    GameAlreadyWon,
 }
