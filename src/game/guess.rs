@@ -13,6 +13,7 @@ impl Guess {
                 guess: letters.to_string(),
             });
         }
+
         let letters: [LetterWithState; 5] = letters
             .chars()
             .enumerate()
@@ -31,12 +32,11 @@ impl Guess {
             .unwrap();
         return Ok(Self { letters });
     }
+
     pub fn to_colored_string(&self) -> String {
-        return self.letters
-            .iter()
-            .map(|l| l.to_colored_string())
-            .collect()
+        return self.letters.iter().map(|l| l.to_colored_string()).collect();
     }
+
     pub fn letters(&self) -> &[LetterWithState; 5] {
         return &self.letters;
     }

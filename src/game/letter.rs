@@ -23,6 +23,7 @@ impl LetterWithState {
             false => Err(Error::NonLetterChar { character: letter }),
         };
     }
+
     pub fn to_colored_string(&self) -> String {
         use LetterState::*;
         let letter = self.letter.to_string();
@@ -31,11 +32,13 @@ impl LetterWithState {
             NotInWord => letter.bright_black().to_string(),
             IncorrectPosition => letter.yellow().to_string(),
             CorrectPosition => letter.green().to_string(),
-        }
+        };
     }
+
     pub fn state(&self) -> LetterState {
         return self.state;
     }
+
     pub fn update_state(&mut self, new_state: LetterState) {
         match self.state {
             LetterState::NotGuessed => self.state = new_state,
@@ -47,6 +50,7 @@ impl LetterWithState {
             LetterState::CorrectPosition | LetterState::NotInWord => (),
         }
     }
+
     pub fn letter(&self) -> char {
         return self.letter;
     }

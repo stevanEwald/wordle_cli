@@ -36,13 +36,13 @@ fn main() {
             Ok(GameState::InProgress) => (),
             Ok(GameState::Won) => {
                 println!("Congratulations, You won");
-                break
+                break;
             }
             Ok(GameState::OutOfTurns) => {
                 println!("Game over: the word was {}", game.target_word());
-                break
+                break;
             }
-            Err(e) => error_message = Some(e.to_string().red())
+            Err(e) => error_message = Some(e.to_string().red()),
         }
     }
 }
