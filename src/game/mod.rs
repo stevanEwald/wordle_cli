@@ -34,13 +34,14 @@ impl Game {
             .collect();
 
         return Ok(Game {
-            target_word: target_word,
             guesses: Vec::new(),
+            state: GameState::InProgress,
+            target_word,
             letters,
             turn_count,
-            state: GameState::InProgress,
         });
     }
+
     pub fn guess(&mut self, word: &str) -> Result<GameState, Error> {
         //return early if game is already won, or we are out of turns
         match self.state {

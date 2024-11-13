@@ -27,12 +27,13 @@ impl LetterWithState {
     pub fn to_colored_string(&self) -> String {
         use LetterState::*;
         let letter = self.letter.to_string();
-        return match self.state {
-            NotGuessed => letter.white().to_string(),
-            NotInWord => letter.bright_black().to_string(),
-            IncorrectPosition => letter.yellow().to_string(),
-            CorrectPosition => letter.green().to_string(),
+        let colored_letter = match self.state {
+            NotGuessed => letter.white(),
+            NotInWord => letter.bright_black(),
+            IncorrectPosition => letter.yellow(),
+            CorrectPosition => letter.green(),
         };
+        return colored_letter.to_string()
     }
 
     pub fn state(&self) -> LetterState {
