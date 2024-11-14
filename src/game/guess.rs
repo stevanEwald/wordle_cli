@@ -6,9 +6,12 @@ pub struct Guess {
     letters: [LetterWithState; 5],
 }
 impl Guess {
-    pub fn new(letters: &str, target_word: &str) -> Result<Self, Error> {
-        let letters = letters.trim().to_ascii_lowercase();
-        let letters: [LetterWithState; 5] = letters
+    pub fn new(guess: &str, target_word: &str) -> Result<Self, Error> {
+        if target_word.len() != 5 {
+            return Err(Error::WrongTargetWordLength { target_word: target_word.to_string() })
+        }
+        let guess = guess.trim().to_ascii_lowercase();
+        let letters  = guess
             .chars()
             .enumerate()
             .map(|(i, c)| {
@@ -23,7 +26,7 @@ impl Guess {
             })
             .collect::<Result<Vec<_>, Error>>()?
             .try_into()
-            .map_err(|_| Error::WrongGuessLength { guess: letters.to_string() })?;
+            .map_err(|_| Error::WrongGuessLength { guess: guess.to_string() })?;
         return Ok(Self { letters });
     }
 

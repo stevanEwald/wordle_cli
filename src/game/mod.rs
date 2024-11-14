@@ -20,8 +20,8 @@ impl Game {
         let target_word = target_word.trim().to_ascii_lowercase();
 
         if target_word.len() != 5 {
-            return Err(Error::WrongGuessLength {
-                guess: target_word.to_string(),
+            return Err(Error::WrongTargetWordLength {
+                target_word: target_word.to_string(),
             });
         }
 
@@ -150,6 +150,8 @@ pub enum Error {
     NonLetterChar { character: char },
     #[error("Inavlid guess length: {guess}, guess must be exactly 5 letters")]
     WrongGuessLength { guess: String },
+    #[error("Inavlid target word length: {target_word}, target word must be exactly 5 letters")]
+    WrongTargetWordLength { target_word: String },
     #[error("Error: tried to guess after game was out of turns")]
     OutOfTurns { target_word: String },
     #[error("Error: tried to guess after game was already won")]
