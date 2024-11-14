@@ -1,6 +1,6 @@
 use colored::Colorize;
 use rand::prelude::*;
-use std::{fs, io, path::Path};
+use std::{fs, io::{self, Write}, path::Path};
 
 mod game;
 use game::*;
@@ -21,18 +21,22 @@ fn main() {
 
     let mut game = Game::new(target_word, turn_count).unwrap();
 
-    let stdin = io::stdin();
-    let mut guess = String::new();
-    let mut error_message = None;
+
+
+    clear_screen();
+    print!("{game}");
     loop {
-        std::process::Command::new("clear").status().unwrap();
-        guess.clear();
+        io::stdout().flush().unwrap();
+
+        let mut guess = String::new();
+        io::stdin().read_line(&mut guess).unwrap();
+
+        let guess_result = game.guess(&guess);
+
+        clear_screen();
+
         print!("{game}");
-        if let Some(error) = error_message.take() {
-            println!("{error}")
-        }
-        stdin.read_line(&mut guess).unwrap();
-        match game.guess(&guess) {
+        match guess_result {
             Ok(GameState::InProgress) => (),
             Ok(GameState::Won) => {
                 println!("Congratulations, You won");
@@ -42,7 +46,15 @@ fn main() {
                 println!("Game over: the word was {}", game.target_word());
                 break;
             }
-            Err(e) => error_message = Some(e.to_string().red()),
+            Err(e) => println!("{}", e.to_string().red()),
         }
     }
+}
+
+fn clear_screen() {
+    let escape = "\x1B";
+    let clear_screen_code = format!("{escape}[2J",);
+    let reset_cursor_code = format!("{escape}[H");
+    print!("{clear_screen_code}");
+    print!("{reset_cursor_code}");
 }
